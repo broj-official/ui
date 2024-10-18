@@ -4,13 +4,11 @@ import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import url from "@rollup/plugin-url";
 import svgr from "@svgr/rollup";
-import autoprefixer from "autoprefixer";
-import cssimport from "postcss-import";
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
-import postcss from "rollup-plugin-postcss";
 import tscAlias from "rollup-plugin-tsc-alias";
+import bundleFonts from "rollup-plugin-bundle-fonts";
 
-import pkg from "./package.json";
+import pkg from "./package.json" assert { type: "json" };
 
 const extensions = [".js", ".jsx", ".ts", ".tsx"];
 
@@ -31,9 +29,7 @@ const config = {
   plugins: [
     peerDepsExternal(),
     resolve({ extensions }),
-    typescript({
-      exclude: ["**/*.stories.tsx"],
-    }),
+    typescript({}),
     tscAlias(),
     commonjs({
       include: "node_modules/**",
@@ -43,20 +39,14 @@ const config = {
       include: ["src/**/*"],
       babelHelpers: "bundled",
     }),
-    postcss({
-      plugins: [cssimport(), autoprefixer()],
-    }),
     url(),
     svgr(),
+    bundleFonts({
+      fontTargetDir: "dist/fonts",
+      cssBundleDir: "dist",
+    }),
   ],
-  external: [
-    "react",
-    "react-dom",
-    "react/jsx-runtime",
-    "@emotion/react",
-    "@emotion/css",
-    "@emotion/styled",
-  ],
+  external: ["react", "react-dom", "react/jsx-runtime", "styled-components"],
 };
 
 export default config;
