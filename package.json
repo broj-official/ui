@@ -1,6 +1,6 @@
 {
   "name": "daniel-ui",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "Broj web design system components",
   "author": "Daniel",
   "type": "module",
@@ -30,7 +30,15 @@
   },
   "dependencies": {
     "react": ">=18",
-    "react-dom": ">=18"
+    "react-dom": ">=18",
+    "styled-components": "^6.1.8",
+    "react-hook-form": "^7.53.0",
+    "react-hot-toast": "^2.4.1",
+    "react-modal": "^3.16.1",
+    "react-modal-sheet": "^3.1.0",
+    "react-select": "^5.8.0",
+    "styled-reset": "^4.5.2",
+    "framer-motion": "^11.3.31"
   },
   "devDependencies": {
     "@rollup/plugin-babel": "^6.0.4",
@@ -47,11 +55,6 @@
     "@types/react-modal": "^3.16.3",
     "@types/styled-components": "^5.1.34",
     "babel-plugin-styled-components": "^2.1.4",
-    "react-hook-form": "^7.53.0",
-    "react-hot-toast": "^2.4.1",
-    "react-modal": "^3.16.1",
-    "react-modal-sheet": "^3.1.0",
-    "react-select": "^5.8.0",
     "rollup": "^4.24.0",
     "rollup-plugin-bundle-fonts": "^1.0.1",
     "rollup-plugin-peer-deps-external": "^2.2.4",
@@ -60,8 +63,6 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-tsc-alias": "^1.1.2",
     "rollup-plugin-typescript2": "^0.36.0",
-    "styled-components": "^6.1.8",
-    "styled-reset": "^4.5.2",
     "typescript": "^5.5.3",
     "zustand": "^4.5.3"
   }
