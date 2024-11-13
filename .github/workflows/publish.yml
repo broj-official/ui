@@ -46,7 +46,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.BROJ_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BROJ_CLASSIC_TOKEN }}
         with:
           tag_name: ${{ needs.create-tag.outputs.tag }}
           release_name: ${{ needs.create-tag.outputs.tag }}
@@ -79,7 +79,7 @@ jobs:
           node-version: 20
           registry-url: https://npm.pkg.github.com
       - env:
-          NODE_AUTH_TOKEN: ${{ secrets.BROJ_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.BROJ_CLASSIC_TOKEN }}
         run: |
           yarn ci
           yarn build
