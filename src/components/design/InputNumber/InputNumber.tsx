@@ -1,12 +1,15 @@
-import { Minus, Plus } from '@assets/svg';
-import { FontPresetKeys } from '@styles/theme';
-import { onlyNumber } from '@utils/onlyNumber';
-import { PickRenameMulti } from '@utils/pickRenameMulti';
-import { ChangeEvent } from 'react';
-import styled, { DefaultTheme, useTheme } from 'styled-components';
+import { Minus, Plus } from "@assets/svg";
+import { Flex } from "@components/design/Flex";
+import { Text } from "@components/design/Text";
+import { FontPresetKeys } from "@styles/theme";
+import { onlyNumber } from "@utils/onlyNumber";
+import { PickRenameMulti } from "@utils/pickRenameMulti";
+import { ChangeEvent } from "react";
+import styled, { DefaultTheme, useTheme } from "styled-components";
 
-type InputNumberSizeType = 'xs' | 'sm' | 'md';
-type InputStatus = 'default' | 'error' | 'disabled';
+type InputNumberSizeType = "xs" | "sm" | "md";
+type InputStatus = "default" | "error" | "disabled";
+type ButtonAlign = "default" | "bothSide";
 type StatusStyle = {
   background: string;
   color: string;
@@ -15,16 +18,15 @@ type StatusStyle = {
 };
 
 type InputFieldStyleProps = {
-  width: string;
   height: string;
   color: string;
   borderColor: string;
   background: string;
   focusBorderColor: string;
   font: FontPresetKeys;
+  buttonAlign: ButtonAlign;
 };
 type SizeStyle = {
-  width: string;
   height: string;
   buttonSize: number;
   buttonPosition: string;
@@ -38,34 +40,36 @@ type Props = {
   placeholder?: string;
   disabled?: boolean;
   isError?: boolean;
+  label?: string;
+  isRequired?: boolean;
+  buttonAlign?: ButtonAlign;
+  unitLabel?: string;
+  name: string;
 };
 
 const SIZE_STYLE: Record<InputNumberSizeType, SizeStyle> = {
   xs: {
-    width: '97px',
-    height: '30px',
+    height: "30px",
     buttonSize: 16,
-    buttonPosition: '7px',
-    font: 'footnote3',
+    buttonPosition: "7px",
+    font: "footnote3",
   },
   sm: {
-    width: '109px',
-    height: '36px',
+    height: "36px",
     buttonSize: 20,
-    buttonPosition: '8px',
-    font: 'callout3',
+    buttonPosition: "8px",
+    font: "callout3",
   },
   md: {
-    width: '121px',
-    height: '42px',
+    height: "42px",
     buttonSize: 24,
-    buttonPosition: '10px',
-    font: 'body3',
+    buttonPosition: "9px",
+    font: "body3",
   },
 };
 
 const getInputStyle = (
-  theme: DefaultTheme,
+  theme: DefaultTheme
 ): Record<InputStatus, StatusStyle> => ({
   default: {
     background: theme.color.gray1,
@@ -88,25 +92,30 @@ const getInputStyle = (
 });
 
 export const InputNumber = ({
-  size = 'sm',
+  size = "sm",
   value,
   onChange,
-  placeholder = '수량',
+  placeholder,
   disabled = false,
   isError = false,
+  buttonAlign = "default",
+  label,
+  isRequired = false,
+  unitLabel = "",
+  name,
 }: Props) => {
   const theme = useTheme();
 
   const buttonStatus: InputStatus = disabled
-    ? 'disabled'
+    ? "disabled"
     : isError
-      ? 'error'
-      : 'default';
+    ? "error"
+    : "default";
 
   const { background, color, borderColor, focusBorderColor } =
     getInputStyle(theme)[buttonStatus];
 
-  const { width, height, buttonSize, buttonPosition, font } = SIZE_STYLE[size];
+  const { buttonSize, height, font } = SIZE_STYLE[size];
 
   // 마이너스
   const handleMinus = () => {
@@ -116,7 +125,7 @@ export const InputNumber = ({
 
     if (value > 1) {
       const event = {
-        target: { value: value - 1 },
+        target: { name, value: value - 1 },
       } as unknown as ChangeEvent<HTMLInputElement>;
       onChange(event);
     }
@@ -129,88 +138,117 @@ export const InputNumber = ({
     }
 
     const event = {
-      target: { value: value + 1 },
+      target: { name, value: value + 1 },
     } as unknown as ChangeEvent<HTMLInputElement>;
     onChange(event);
   };
 
-  // maxLength 설정을 위한 로직
-  const handleMaxLength = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length > e.target.maxLength) {
-      e.target.value = e.target.value.slice(0, e.target.maxLength);
-    }
-  };
-
   return (
-    <Container>
-      <StyledInput
-        type={'number'}
-        placeholder={placeholder}
-        value={value === 0 ? '' : value} // value가 0일 때 빈 문자열로 표시
-        onChange={onChange}
-        maxLength={4}
-        onInput={handleMaxLength}
-        disabled={disabled}
-        onKeyDown={onlyNumber}
-        $width={width}
-        $height={height}
-        $background={background}
-        $color={color}
+    <Flex direction={"column"} gap={6} fullWidth>
+      {!!label &&
+        (isRequired ? (
+          <Text font={"callout3"} color={"gray8"}>
+            {label}
+            <Text font={"callout3"} color={"primary6"}>
+              {" *"}
+            </Text>
+          </Text>
+        ) : (
+          <Text font={"callout3"} color={"gray8"}>
+            {label}
+          </Text>
+        ))}
+      <Container
         $borderColor={borderColor}
-        $focusBorderColor={focusBorderColor}
-        $font={font}
-      />
-      <StyledMinus
-        $buttonPosition={buttonPosition}
-        width={buttonSize}
-        height={buttonSize}
-        onClick={handleMinus}
-        onMouseDown={(e) => e.preventDefault()}
-        $disabled={disabled}
-      />
-      <StyledPlus
-        $buttonPosition={buttonPosition}
-        width={buttonSize}
-        height={buttonSize}
-        onClick={handlePlus}
-        onMouseDown={(e) => e.preventDefault()}
-        $disabled={disabled}
-      />
-    </Container>
+        $background={background}
+        $buttonAlign={buttonAlign}
+        $unitLabel={unitLabel}
+      >
+        <StyledMinus
+          width={buttonSize}
+          height={buttonSize}
+          onClick={handleMinus}
+          $disabled={disabled}
+          $buttonAlign={buttonAlign}
+          $unitLabel={unitLabel}
+        />
+        <StyledPlus
+          width={buttonSize}
+          height={buttonSize}
+          onClick={handlePlus}
+          $disabled={disabled}
+          $buttonAlign={buttonAlign}
+          $unitLabel={unitLabel}
+        />
+        <StyledInput
+          type={"number"}
+          placeholder={placeholder}
+          value={value === 0 ? "" : value} // value가 0일 때 빈 문자열로 표시
+          onChange={onChange}
+          disabled={disabled}
+          onKeyDown={onlyNumber}
+          $height={height}
+          $background={background}
+          $color={color}
+          $borderColor={borderColor}
+          $focusBorderColor={focusBorderColor}
+          $font={font}
+          $buttonAlign={buttonAlign}
+          name={name}
+        />
+        {buttonAlign === "default" && !!unitLabel && (
+          <StyledText font={"callout3"} color={"gray9"}>
+            {unitLabel}
+          </StyledText>
+        )}
+      </Container>
+    </Flex>
   );
 };
 
 type RenamedInputFieldStyleProps = PickRenameMulti<
   InputFieldStyleProps,
   {
-    width: '$width';
-    height: '$height';
-    color: '$color';
-    background: '$background';
-    borderColor: '$borderColor';
-    focusBorderColor: '$focusBorderColor';
-    font: '$font';
+    height: "$height";
+    color: "$color";
+    background: "$background";
+    borderColor: "$borderColor";
+    focusBorderColor: "$focusBorderColor";
+    font: "$font";
+    buttonAlign: "$buttonAlign";
   }
 >;
 
-const Container = styled.div`
-  position: relative;
+const Container = styled.div<{
+  $borderColor: string;
+  $background: string;
+  $buttonAlign: ButtonAlign;
+  $unitLabel: string;
+}>`
+  display: grid;
+  grid-template-columns: ${({ $buttonAlign, $unitLabel }) =>
+    $buttonAlign === "default"
+      ? $unitLabel
+        ? "1fr auto auto auto" // unitLabel이 있을 때, 텍스트 먼저 배치
+        : "2fr auto auto" // unitLabel이 없을 때
+      : "24px 1fr 24px"};
+  align-items: center;
+  column-gap: 4px; /* 각 아이템 사이의 간격 */
+  border: 1px solid ${({ $borderColor }) => $borderColor};
+  background: ${({ $background }) => $background};
+  border-radius: 6px;
+  padding: 0px 16px;
 `;
 
 const StyledInput = styled.input<RenamedInputFieldStyleProps>`
-  width: ${({ $width }) => $width};
+  width: 100%;
   height: ${({ $height }) => $height};
   padding: 0px 10px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
 
   ${({ theme, $font }) => theme.font[$font]};
-  text-align: center;
+  text-align: ${({ $buttonAlign }) =>
+    $buttonAlign === "default" ? "right" : "center"};
   color: ${({ $color }) => $color};
-
-  border: 1px solid ${({ $borderColor }) => $borderColor};
-  border-radius: 6px;
   background: ${({ $background }) => $background};
 
   &:focus {
@@ -229,22 +267,34 @@ const StyledInput = styled.input<RenamedInputFieldStyleProps>`
   }
 `;
 
+const StyledText = styled(Text)`
+  grid-area: "1 / 1 / 1 / 2"; // 첫 번째 그리드 위치
+`;
+
 const StyledMinus = styled(Minus)<{
-  $buttonPosition: string;
   $disabled: boolean;
+  $buttonAlign: ButtonAlign;
+  $unitLabel: string;
 }>`
-  position: absolute;
-  top: ${({ $buttonPosition }) => $buttonPosition};
-  left: ${({ $buttonPosition }) => $buttonPosition};
-  cursor: ${({ $disabled }) => !$disabled && 'pointer'};
+  cursor: ${({ $disabled }) => (!$disabled ? "pointer" : "not-allowed")};
+  grid-area: ${({ $buttonAlign, $unitLabel }) =>
+    $buttonAlign === "default"
+      ? $unitLabel
+        ? "1 / 3 / 2 / 4" // unitLabel이 있을 때 Minus가 세 번째 그리드 위치
+        : "1 / 2 / 2 / 3" // unitLabel이 없을 때 Minus가 두 번째 그리드 위치
+      : "1 / 1 / 2 / 2"};
 `;
 
 const StyledPlus = styled(Plus)<{
-  $buttonPosition: string;
   $disabled: boolean;
+  $buttonAlign: ButtonAlign;
+  $unitLabel: string;
 }>`
-  position: absolute;
-  top: ${({ $buttonPosition }) => $buttonPosition};
-  right: ${({ $buttonPosition }) => $buttonPosition};
-  cursor: ${({ $disabled }) => !$disabled && 'pointer'};
+  cursor: ${({ $disabled }) => (!$disabled ? "pointer" : "not-allowed")};
+  grid-area: ${({ $buttonAlign, $unitLabel }) =>
+    $buttonAlign === "default"
+      ? $unitLabel
+        ? "1 / 4 / 2 / 5" // unitLabel이 있을 때 Plus가 네 번째 그리드 위치
+        : "1 / 3 / 2 / 4" // unitLabel이 없을 때 Plus가 세 번째 그리드 위치
+      : "1 / 3 / 2 / 4"};
 `;
