@@ -25,6 +25,8 @@ jobs:
   create-tag:
     needs: diff
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
     if: needs.diff.outputs.previous != needs.diff.outputs.current
