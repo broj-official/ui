@@ -1,0 +1,13 @@
+name: "💻 feature"
+description: "새로운 기능 템플릿"
+title: "[feature] "
+labels: "feature"
+
+body:
+  - type: textarea
+    attributes:
+      label: 💻 개발 내용
+      description: 개발할 내용
+      placeholder: 개발할 내용을 적어주세요.
+    validations:
+      required: true
