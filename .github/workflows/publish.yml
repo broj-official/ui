@@ -65,7 +65,7 @@ jobs:
       - env:
           NODE_AUTH_TOKEN: ${{ secrets.UI_TOKEN }}
         run: |
-          yarn ci
+          yarn
           yarn build
           npm publish --access=public
 
@@ -81,6 +81,6 @@ jobs:
       - env:
           NODE_AUTH_TOKEN: ${{ secrets.BROJ_CLASSIC_TOKEN }}
         run: |
-          yarn ci
+          yarn
           yarn build
           npm publish --access=public
