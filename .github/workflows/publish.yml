@@ -6,21 +6,7 @@ on:
     paths: ['package.json']
 
 jobs:
-  update_version:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Bump patch version
-        run: |
-          npm version patch -m "ci: bump version to %s [skip ci]"
-          git push origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   diff:
-    needs: update_version
     runs-on: ubuntu-latest
     outputs:
       previous: ${{ steps.version.outputs.previous }}
