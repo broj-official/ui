@@ -3,9 +3,22 @@ name: publish
 on:
   push:
     branches: [main]
-    paths: ["package.json"]
+    paths: ['package.json']
 
 jobs:
+  update_version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Bump patch version
+        run: |
+          npm version patch -m "ci: bump version to %s [skip ci]"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   diff:
     runs-on: ubuntu-latest
     outputs:
