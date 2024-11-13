@@ -15,3 +15,4 @@ export * from './Select/Select';
 export * from './Tag/Tag';
 export * from './Text/Text';
 export * from './TitleSection/TitleSection';
+export * from './SegmentedControl/SegmentedControl'
