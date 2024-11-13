@@ -1,12 +1,12 @@
 {
-  "name": "daniel-ui",
-  "version": "1.0.6",
+  "name": "ui",
+  "version": "1.0.0",
   "description": "Broj web design system components",
-  "author": "Daniel",
+  "author": "BROJ",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seunghoking/ui.git"
+    "url": "git+https://github.com/broj-official/ui.git"
   },
   "publishConfig": {
     "access": "public"
