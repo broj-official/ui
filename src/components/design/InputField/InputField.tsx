@@ -1,17 +1,12 @@
-import { Flex } from '@components/design/Flex';
-import { Text } from '@components/design/Text';
-import { BROJSize, FontPresetKeys } from '@styles/theme';
-import { onlyNumber } from '@utils/onlyNumber';
-import { PickRenameMulti } from '@utils/pickRenameMulti';
+import { BROJSize, FontPresetKeys } from "@styles/theme";
+import { onlyNumber } from "@utils/onlyNumber";
+import { PickRenameMulti } from "@utils/pickRenameMulti";
+import { HTMLInputTypeAttribute, ChangeEvent, forwardRef, ForwardedRef } from "react";
+import { UseFormRegisterReturn } from "react-hook-form";
+import styled, { DefaultTheme, useTheme } from "styled-components";
+import { Flex } from "../Flex";
+import { Text } from "../Text";
 
-import {
-  ChangeEvent,
-  ForwardedRef,
-  forwardRef,
-  HTMLInputTypeAttribute,
-} from 'react';
-import { UseFormRegisterReturn } from 'react-hook-form';
-import styled, { DefaultTheme, useTheme } from 'styled-components';
 
 type InputSize = BROJSize;
 type InputStatus = 'default' | 'error' | 'disabled';
@@ -51,6 +46,7 @@ type InputFieldProps = {
   maxLength?: number;
   isOnlyNumber?: boolean;
   textAlign?: 'left' | 'center' | 'right';
+  isRequired?: boolean;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -114,7 +110,9 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
       maxLength,
       isOnlyNumber,
       textAlign = 'left',
+      isRequired = false,
       onChange,
+      ...rest
     },
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
@@ -132,12 +130,20 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
     const { height, font } = SIZE_STYLE[size];
 
     return (
-      <Flex fullWidth={fullWidth} direction={'column'} gap={6}>
-        {!!label && (
-          <Text font={'callout3'} color={'gray9'}>
-            {label}
-          </Text>
-        )}
+      <Flex fullWidth={fullWidth} direction={'column'} gap={6} >
+        {!!label &&
+          (isRequired ? (
+            <Text font={'callout3'} color={'gray8'}>
+              {label}
+              <Text font={'callout3'} color={'primary6'}>
+                {' *'}
+              </Text>
+            </Text>
+          ) : (
+            <Text font={'callout3'} color={'gray8'}>
+              {label}
+            </Text>
+          ))}
         {!!subLabel && (
           <Text font={'footnote3'} color={'gray8'}>
             {subLabel}
@@ -163,6 +169,7 @@ export const InputField = forwardRef<HTMLInputElement, InputFieldProps>(
           autoComplete={'off'}
           autoCapitalize={'off'}
           $textAlign={textAlign}
+          {...rest}
           {...register}
         />
 
@@ -200,7 +207,7 @@ const Input = styled.input<RenamedInputFieldStyleProps>`
   text-align: ${({ $textAlign }) => $textAlign};
 
   ${({ theme, $font }) => theme.font[$font]}
-  color: ${({ color }) => color};
+  color: ${({ $color }) => $color};
 
   border-radius: 6px;
   border: 1px solid ${({ $borderColor }) => $borderColor};
