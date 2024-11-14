@@ -1,0 +1,13 @@
+name: "🐛 fix"
+description: "오류 수정"
+title: "[fix] "
+labels: "fix"
+
+body:
+  - type: textarea
+    attributes:
+      label: ？ 오류
+      description: 오류 내용
+      placeholder: 오류 내용을 적어주세요.
+    validations:
+      required: true
