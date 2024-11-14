@@ -1,8 +1,8 @@
-import { BROJSize, FontPresetKeys } from '@styles/theme';
-import { PickRenameMulti } from '@utils/pickRenameMulti';
-import { ReactNode, memo, useState } from 'react';
-import styled, { useTheme } from 'styled-components';
-import { DefaultTheme } from 'styled-components/dist/types';
+import { BROJSize, FontPresetKeys } from "@styles/theme";
+import { PickRenameMulti } from "@utils/pickRenameMulti";
+import { ReactNode, memo, useState } from "react";
+import styled, { DefaultTheme, useTheme } from "styled-components";
+
 
 export type Variant = 'default' | 'filled' | 'light' | 'outline' | 'subtle';
 type Size = BROJSize;
@@ -14,6 +14,7 @@ type ButtonProps = {
   size?: Size;
   fullWidth?: boolean;
   disabled?: boolean;
+  topSection?: ReactNode;
   leftSection?: ReactNode;
   rightSection?: ReactNode;
   inputType?: 'submit' | 'reset' | 'button' | undefined;
@@ -22,6 +23,7 @@ type ButtonProps = {
   background?: string;
   color?: string;
   padding?: string | number;
+  isSelected?: boolean;
 };
 
 // Style에 필요한 Props type
@@ -29,6 +31,8 @@ type ButtonStyleProps = {
   background: string;
   color: string;
   border?: string;
+  isTopSection?: boolean;
+  isSelected?: boolean;
 };
 type ButtonStateStyles<T extends string> = {
   [K in T]: ButtonStyleProps;
@@ -39,6 +43,7 @@ type SizeStyleProps = {
   padding: string | number;
   height: string;
   font: FontPresetKeys;
+  topSectionHeight: string;
 };
 
 type DefaultStyleProps = {
@@ -130,21 +135,25 @@ const SIZE_STYLE: Record<Size, SizeStyleProps> = {
   xs: {
     padding: '0px 12px',
     height: '30px',
+    topSectionHeight: '48px',
     font: 'footnote3',
   },
   sm: {
     padding: '0px 16px',
     height: '36px',
+    topSectionHeight: '52px',
     font: 'callout3',
   },
   md: {
     padding: '0px 18px',
     height: '42px',
+    topSectionHeight: '56px',
     font: 'callout2',
   },
   lg: {
     padding: '0px 22px',
     height: '50px',
+    topSectionHeight: '72px',
     font: 'body2',
   },
 };
@@ -155,6 +164,7 @@ export const Button = memo(
     size = 'xs',
     fullWidth = false,
     disabled,
+    topSection,
     leftSection,
     rightSection,
     inputType = 'button',
@@ -163,6 +173,8 @@ export const Button = memo(
     background: overrideBgColor,
     color: overrideColor,
     padding: overridePadding,
+    isSelected = false,
+    ...rest
   }: ButtonProps) => {
     const theme = useTheme();
     const [isPressed, setIsPressed] = useState(false);
@@ -176,7 +188,7 @@ export const Button = memo(
     const { background, color, border } =
       getButtonStyles(theme)[variant][buttonState];
 
-    const { font, height, padding } = SIZE_STYLE[size];
+    const { font, height, topSectionHeight, padding } = SIZE_STYLE[size];
 
     return (
       <CustomButton
@@ -189,11 +201,16 @@ export const Button = memo(
         $border={border}
         width={fullWidth ? '100%' : 'auto'}
         height={height}
+        $topSectionHeight={topSectionHeight}
+        $isTopSection={!!topSection}
         $font={font}
         $padding={overridePadding ?? padding}
         $background={overrideBgColor ?? background}
         color={overrideColor ?? color}
+        $isSelected={isSelected}
+        {...rest}
       >
+        {topSection}
         {leftSection}
         {children}
         {rightSection}
@@ -205,33 +222,43 @@ export const Button = memo(
 // To remove for styled component type warning
 type RenamedButtonStyleProps = PickRenameMulti<
   ButtonStyleProps,
-  { background: '$background'; border: '$border' }
+  {
+    background: '$background';
+    border: '$border';
+    isTopSection: '$isTopSection';
+    isSelected: '$isSelected';
+  }
 >;
 type RenamedSizeStyleProps = PickRenameMulti<
   SizeStyleProps,
-  { padding: '$padding'; font: '$font' }
+  { padding: '$padding'; font: '$font'; topSectionHeight: '$topSectionHeight' }
 >;
 
 const CustomButton = styled.button<
   RenamedButtonStyleProps & RenamedSizeStyleProps & DefaultStyleProps
 >`
   display: flex;
+  flex-direction: ${({ $isTopSection }) => ($isTopSection ? 'column' : 'row')};
   justify-content: center;
   align-items: center;
 
   width: ${({ width }) => width};
-  height: ${({ height }) => height};
+  height: ${({ height, $isTopSection, $topSectionHeight }) =>
+    $isTopSection ? $topSectionHeight : height};
   padding: ${({ $padding }) => $padding};
   border-radius: 6px;
 
-  background-color: ${({ $background }) => $background};
-  color: ${({ color }) => color};
-  border: ${({ $border }) => $border};
+  background-color: ${({ $background, $isSelected, theme }) =>
+    $isSelected ? theme.color.primary1 : $background};
+  color: ${({ color, $isSelected, theme }) =>
+    $isSelected ? theme.color.primary6 : color};
+  border: ${({ $border, $isSelected, theme }) =>
+    $isSelected ? `1px solid ${theme.color.primary3}` : $border};
 
   ${({ theme, $font }) => theme.font[$font]}
   cursor: pointer;
 
-  gap: 6px;
+  gap: ${({ $isTopSection }) => ($isTopSection ? '2px' : '6px')};
   white-space: nowrap;
 
   &:disabled {
